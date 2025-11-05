@@ -17,4 +17,4 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 =======
 # SmartQuiz
->>>>>>> a9d8387ffcb7911bb6fe55b1f8c5ab06c2eaa33d
+a9d8387ffcb7911bb6fe55b1f8c5ab06c2eaa33d
