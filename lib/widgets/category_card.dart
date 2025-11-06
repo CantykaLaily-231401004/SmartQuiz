@@ -1,52 +1,63 @@
 import 'package:flutter/material.dart';
+import '../config/theme.dart';
 
 class CategoryCard extends StatelessWidget {
   final String title;
+  final String imagePath;
   final bool isSelected;
   final VoidCallback onTap;
-  final IconData? icon;
 
   const CategoryCard({
     super.key,
     required this.title,
+    required this.imagePath,
     required this.isSelected,
     required this.onTap,
-    this.icon,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 163,
         height: 163,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
-            width: isSelected ? 2 : 1,
-            color: isSelected ? const Color(0xFFFFCE31) : const Color(0xFF4A70A9),
+            color: isSelected
+                ? (isDarkMode ? AppTheme.accentBlue : AppTheme.yellowAccent)
+                : (isDarkMode
+                    ? const Color(0xFF002359)
+                    : theme.primaryColor.withOpacity(0.3)),
+            width: isSelected ? 3 : 1,
           ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: (isDarkMode ? AppTheme.accentBlue : AppTheme.yellowAccent)
+                        .withOpacity(0.5),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  ),
+                ]
+              : [],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (icon != null)
-              Icon(
-                icon,
-                size: 60,
-                color: const Color(0xFF4A70A9),
-              ),
-            const SizedBox(height: 16),
+            Image.asset(imagePath, width: 80, height: 80),
+            const SizedBox(height: 10),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFF092F69),
+              style: TextStyle(
                 fontSize: 12,
-                fontFamily: 'Poppins',
                 fontWeight: FontWeight.w700,
+                color: isDarkMode ? Colors.white : Colors.black,
               ),
             ),
           ],
