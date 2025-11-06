@@ -16,7 +16,6 @@ class _SplashScreenState extends State<SplashScreen> {
     // Navigasi setelah delay
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        // Menggunakan nama rute yang sudah didefinisikan
         Navigator.pushReplacementNamed(context, AppRoutes.home);
       }
     });
@@ -25,31 +24,35 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Menggunakan widget GradientBackground yang sudah dibuat
       body: GradientBackground(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Hanya menampilkan logo
-              Image.asset(
-                'assets/images/logo.png',
-                width: 300,
-                height: 120,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/logo.png',
+                        width: 300,
+                        height: 120,
+                      ),
+                      const SizedBox(height: 30),
+
+                      const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        strokeWidth: 3,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              const SizedBox(height: 30),
-              // Dan loading indicator
-              const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                strokeWidth: 3,
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
   }
 }
-
-
-
