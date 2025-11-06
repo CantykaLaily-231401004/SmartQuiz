@@ -6,6 +6,7 @@ import '../widgets/gradient_background.dart';
 import '../widgets/theme_toggle.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/category_card.dart';
+import '../widgets/blob_decoration.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -48,11 +49,35 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       body: GradientBackground(
         child: SafeArea(
           child: Stack(
             children: [
+              // Blob Decorations
+              Positioned(
+                top: -50,
+                right: -50,
+                child: BlobDecoration(
+                  size: 200,
+                  color: isDarkMode
+                      ? const Color.fromRGBO(33, 150, 243, 0.1) // Colors.blue
+                      : const Color.fromRGBO(255, 255, 255, 0.2), // Colors.white
+                ),
+              ),
+              Positioned(
+                bottom: -80,
+                left: -60,
+                child: BlobDecoration(
+                  size: 250,
+                  color: isDarkMode
+                      ? const Color.fromRGBO(63, 81, 181, 0.1) // Colors.indigo
+                      : const Color.fromRGBO(255, 255, 255, 0.15), // Colors.white
+                ),
+              ),
+
               SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                 child: Column(
@@ -62,9 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       alignment: Alignment.topRight,
                       child: ThemeToggle(),
                     ),
-
                     const SizedBox(height: 40),
-
                     Center(
                       child: Image.asset(
                         'assets/images/logo.png',
@@ -72,9 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 50,
                       ),
                     ),
-
                     const SizedBox(height: 20),
-
                     const Center(
                       child: Text(
                         'Aplikasi Kuis Pilihan Berganda untuk Menguji Kemampuanmu!',
@@ -87,52 +108,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 40),
-
-                    const Text(
+                    Text(
                       'Masukkan Nama',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
-
                     const SizedBox(height: 12),
-
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: const Color(0xFF4A70A9)),
-                      ),
-                      child: TextField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(
-                          hintText: 'Nama Kamu',
-                          hintStyle: TextStyle(color: Color(0x7A616161), fontSize: 16, fontFamily: 'Poppins'),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 17),
-                        ),
-                      ),
+                    TextField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(hintText: 'Nama Kamu'),
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
-
                     const SizedBox(height: 30),
-
-                    const Text(
+                    Text(
                       'Pilih Kategori',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
-
                     const SizedBox(height: 12),
-
                     Row(
                       children: [
                         Expanded(
@@ -154,10 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-
-
                     const SizedBox(height: 40),
-
                     CustomButton(
                       text: 'Mulai Kuis',
                       onPressed: _startQuiz,
