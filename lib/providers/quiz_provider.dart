@@ -9,6 +9,8 @@ class QuizProvider with ChangeNotifier {
   List<Question> _questions = [];
   int _currentQuestionIndex = 0;
   List<int?> _userAnswers = [];
+  bool _isDarkMode = false;
+  final List<QuizResult> _leaderboard = [];
 
   // Getters
   String get playerName => _playerName;
@@ -16,6 +18,8 @@ class QuizProvider with ChangeNotifier {
   List<Question> get questions => _questions;
   int get currentQuestionIndex => _currentQuestionIndex;
   List<int?> get userAnswers => _userAnswers;
+  bool get isDarkMode => _isDarkMode;
+  List<QuizResult> get leaderboard => _leaderboard;
 
   Question? get currentQuestion =>
       _questions.isNotEmpty && _currentQuestionIndex < _questions.length
@@ -23,7 +27,6 @@ class QuizProvider with ChangeNotifier {
           : null;
 
   int get totalQuestions => _questions.length;
-
   bool get isLastQuestion => _currentQuestionIndex >= _questions.length - 1;
 
   // Methods
@@ -46,6 +49,7 @@ class QuizProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
   void nextQuestion() {
     if (_currentQuestionIndex < _questions.length - 1) {
       _currentQuestionIndex++;
@@ -81,6 +85,27 @@ class QuizProvider with ChangeNotifier {
     );
   }
 
+  void saveToLeaderboard() {
+    final result = getQuizResult();
+    _leaderboard.add(result);
+    _leaderboard.sort((a, b) => b.score.compareTo(a.score));
+    notifyListeners();
+  }
+
+  void removeFromLeaderboard(int index, String category) {
+    if (category == 'Semua') {
+      _leaderboard.removeAt(index);
+    } else {
+      final filteredList = _leaderboard
+          .where((result) => result.category == category)
+          .toList();
+      if (index < filteredList.length) {
+        _leaderboard.remove(filteredList[index]);
+      }
+    }
+    notifyListeners();
+  }
+
   void resetQuiz() {
     _currentQuestionIndex = 0;
     _userAnswers = List.filled(_questions.length, null);
@@ -93,6 +118,11 @@ class QuizProvider with ChangeNotifier {
     _questions = [];
     _currentQuestionIndex = 0;
     _userAnswers = [];
+    notifyListeners();
+  }
+
+  void toggleTheme() {
+    _isDarkMode = !_isDarkMode;
     notifyListeners();
   }
 }
