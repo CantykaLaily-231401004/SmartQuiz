@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/question.dart';
+import '../models/quiz_result.dart';
 import '../data/dummy_data.dart';
 
 class QuizProvider with ChangeNotifier {
@@ -67,5 +68,31 @@ class QuizProvider with ChangeNotifier {
       }
     }
     return score;
+  }
+
+  QuizResult getQuizResult() {
+    return QuizResult(
+      playerName: _playerName,
+      category: _selectedCategory,
+      score: calculateScore(),
+      totalQuestions: _questions.length,
+      userAnswers: _userAnswers,
+      completedAt: DateTime.now(),
+    );
+  }
+
+  void resetQuiz() {
+    _currentQuestionIndex = 0;
+    _userAnswers = List.filled(_questions.length, null);
+    notifyListeners();
+  }
+
+  void resetAll() {
+    _playerName = '';
+    _selectedCategory = '';
+    _questions = [];
+    _currentQuestionIndex = 0;
+    _userAnswers = [];
+    notifyListeners();
   }
 }
