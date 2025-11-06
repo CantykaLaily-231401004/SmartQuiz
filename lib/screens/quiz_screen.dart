@@ -6,6 +6,7 @@ import '../widgets/navigation_button.dart';
 import '../widgets/theme_toggle.dart';
 import '../widgets/answer_option.dart';
 import '../config/routes.dart';
+import '../config/theme.dart';
 
 class QuizMainScreen extends StatefulWidget {
   const QuizMainScreen({super.key});
@@ -17,6 +18,8 @@ class QuizMainScreen extends StatefulWidget {
 class _QuizMainScreenState extends State<QuizMainScreen> {
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Consumer<QuizProvider>(
@@ -36,28 +39,31 @@ class _QuizMainScreenState extends State<QuizMainScreen> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF4A70A9),
-                    boxShadow: [
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? const Color.fromRGBO(39, 39, 58, 0.5) : const Color(0xFF4A70A9),
+                    boxShadow: const [
                       BoxShadow(
-                        color: Color(0x3F000000),
+                        color: Color.fromRGBO(0, 0, 0, 0.2),
                         blurRadius: 4,
                         offset: Offset(0, 2),
                       ),
                     ],
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Kuis ${provider.selectedCategory}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600,
+                      Expanded(
+                        child: Text(
+                          'Kuis ${provider.selectedCategory}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      const SizedBox(width: 16),
                       const ThemeToggle(),
                     ],
                   ),
@@ -70,7 +76,8 @@ class _QuizMainScreenState extends State<QuizMainScreen> {
                       children: [
                         // Timer
                         CircularTimer(
-                          durationInSeconds: 300, // 5 minutes
+                          key: ValueKey(provider.selectedCategory),
+                          durationInSeconds: 300, // 5 menit
                           onTimerEnd: () {
                             _showTimeUpDialog(context, provider);
                           },
@@ -83,13 +90,11 @@ class _QuizMainScreenState extends State<QuizMainScreen> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.grey[800]
-                                : Colors.white,
+                            color: isDarkMode ? AppTheme.darkCard : Colors.white,
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: const [
                               BoxShadow(
-                                color: Color(0x3F000000),
+                                color: Color.fromRGBO(0, 0, 0, 0.2),
                                 blurRadius: 16,
                                 offset: Offset(0, 0),
                               ),
@@ -104,8 +109,10 @@ class _QuizMainScreenState extends State<QuizMainScreen> {
                                 children: [
                                   Text(
                                     'Pertanyaan: ${provider.currentQuestionIndex + 1}/${provider.totalQuestions}',
-                                    style: const TextStyle(
-                                      color: Color(0xFF4A70A9),
+                                    style: TextStyle(
+                                      color: isDarkMode
+                                          ? AppTheme.accentBlue
+                                          : const Color(0xFF4A70A9),
                                       fontSize: 12,
                                       fontFamily: 'Poppins',
                                       fontWeight: FontWeight.w500,
@@ -116,7 +123,7 @@ class _QuizMainScreenState extends State<QuizMainScreen> {
                                     child: const Text(
                                       'Keluar',
                                       style: TextStyle(
-                                        color: Color(0xFFA02525),
+                                        color: AppTheme.redWrong,
                                         fontSize: 12,
                                         fontFamily: 'Poppins',
                                         fontWeight: FontWeight.w500,
@@ -132,9 +139,7 @@ class _QuizMainScreenState extends State<QuizMainScreen> {
                               Text(
                                 question.question,
                                 style: TextStyle(
-                                  color: Theme.of(context).brightness == Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black,
+                                  color: isDarkMode ? Colors.white : Colors.black,
                                   fontSize: 16,
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w400,
@@ -143,7 +148,7 @@ class _QuizMainScreenState extends State<QuizMainScreen> {
 
                               const SizedBox(height: 30),
 
-                              // Answer options menggunakan widget reusable
+                              // Answer options
                               ...List.generate(question.options.length, (index) {
                                 final isSelected = userAnswer == index;
                                 return AnswerOption(
@@ -213,11 +218,26 @@ class _QuizMainScreenState extends State<QuizMainScreen> {
   }
 
   void _showExitDialog(BuildContext context, QuizProvider provider) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Keluar dari Kuis'),
-        content: const Text('Yakin ingin keluar? Progress akan hilang.'),
+        backgroundColor: isDarkMode ? AppTheme.darkCard : Colors.white,
+        title: Text(
+          'Keluar dari Kuis',
+          style: TextStyle(
+            color: isDarkMode ? Colors.white : Colors.black,
+            fontFamily: 'Poppins',
+          ),
+        ),
+        content: Text(
+          'Yakin ingin keluar? Progress akan hilang.',
+          style: TextStyle(
+            color: isDarkMode ? Colors.white70 : Colors.black87,
+            fontFamily: 'Poppins',
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -237,12 +257,27 @@ class _QuizMainScreenState extends State<QuizMainScreen> {
   }
 
   void _showTimeUpDialog(BuildContext context, QuizProvider provider) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: const Text('Waktu Habis!'),
-        content: const Text('Waktu kuis telah habis. Kuis akan selesai.'),
+        backgroundColor: isDarkMode ? AppTheme.darkCard : Colors.white,
+        title: Text(
+          'Waktu Habis!',
+          style: TextStyle(
+            color: isDarkMode ? Colors.white : Colors.black,
+            fontFamily: 'Poppins',
+          ),
+        ),
+        content: Text(
+          'Waktu kuis telah habis. Kuis akan selesai.',
+          style: TextStyle(
+            color: isDarkMode ? Colors.white70 : Colors.black87,
+            fontFamily: 'Poppins',
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () {
