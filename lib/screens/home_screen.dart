@@ -1,5 +1,7 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/quiz_provider.dart';
+import 'quiz_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,21 +24,33 @@ class _HomeScreenState extends State<HomeScreen> {
   void _startQuiz() {
     if (_nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Silakan masukkan nama Anda'), backgroundColor: Colors.red),
+        const SnackBar(
+          content: Text('Silakan masukkan nama Anda'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
+
     if (_selectedCategory.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Silakan pilih kategori'), backgroundColor: Colors.red),
+        const SnackBar(
+          content: Text('Silakan pilih kategori'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Memulai kuis $_selectedCategory untuk ${_nameController.text}'),
-        backgroundColor: Colors.green,
-      ),
+
+    // Set data to provider
+    final provider = Provider.of<QuizProvider>(context, listen: false);
+    provider.setPlayerName(_nameController.text.trim());
+    provider.selectCategory(_selectedCategory);
+
+    // Navigate to Quiz Screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const QuizScreen()),
     );
   }
 
@@ -69,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     _buildTitle(),
                     const SizedBox(height: 15),
                     _buildSubtitle(),
-                    const SizedBox(height: 30), // Jarak diperkecil dari 60 menjadi 40
+                    const SizedBox(height: 30),
                     _buildNameInput(),
                     const SizedBox(height: 35),
                     _buildCategorySelection(),
@@ -77,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     _buildStartButton(),
                     const SizedBox(height: 40),
                   ],
-                ), 
+                ),
               ),
             ),
           ],
@@ -89,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildDecorativeBackground() {
     return Stack(
       children: [
-        // Top left blob - using image
+        // Top left blob 1
         Positioned(
           left: -96,
           top: -26,
@@ -114,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
 
-        // Top left blob 2 - using image
+        // Top left blob 2
         Positioned(
           left: -96,
           top: 70,
@@ -139,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
 
-        // Bottom right blob 1 - using image
+        // Bottom right blob 1
         Positioned(
           right: -115,
           bottom: -50,
@@ -164,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
 
-        // Bottom right blob 2 - using image
+        // Bottom right blob 2
         Positioned(
           right: -127,
           bottom: 47,
@@ -198,10 +212,10 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const Text(
-            'Light Mode',
+          Text(
+            _isDarkMode ? 'Dark Mode' : 'Light Mode',
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 12,
               fontFamily: 'Poppins',
@@ -394,7 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
             width: isSelected ? 3 : 1,
-            color: isSelected ? const Color(0xFF4A70A9) : const Color(0xFF4A70A9),
+            color: const Color(0xFF4A70A9),
           ),
         ),
         child: Column(
