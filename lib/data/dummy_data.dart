@@ -36,33 +36,33 @@ class DummyData {
 
   static List<Question> generalKnowledgeQuestions = [
     Question(
-      question: 'Siapakah presiden pertama Indonesia?',
-      options: ['Soekarno', 'Soeharto', 'B.J. Habibie', 'Megawati'],
-      correctAnswerIndex: 0,
-      category: 'Pengetahuan Umum',
-    ),
-    Question(
-      question: 'Proklamasi kemerdekaan Indonesia terjadi pada tanggal?',
-      options: ['17 Agustus 1945', '17 Agustus 1944', '17 Agustus 1944', '17 Agustus 1947'],
-      correctAnswerIndex: 0,
-      category: 'Pengetahuan Umum',
-    ),
-    Question(
-      question: 'Berapa jumlah provinsi di Indonesia saat ini?',
-      options: ['34', '35', '36', '38'],
+      question: 'Manakah dari berikut ini yang BUKAN hewan dari Zodiak Tionghoa?',
+      options: ['Ayam jago', 'Monyet', 'Babi', 'Gajah'],
       correctAnswerIndex: 3,
       category: 'Pengetahuan Umum',
     ),
     Question(
-      question: 'Planet terbesar di tata surya adalah?',
-      options: ['Bumi', 'Mars', 'Jupiter', 'Saturnus'],
+      question: 'Bendera mana yang berisi lingkaran biru tua di tengahnya yang bertuliskan \'pesanan dan kemajuan\'?',
+      options: ['Portugal', 'Tanjung Verde', 'Brasil', 'Suriname'],
       correctAnswerIndex: 2,
       category: 'Pengetahuan Umum',
     ),
     Question(
-      question: 'USU (Universitas Sumatera Utara) terletak di kota?',
-      options: ['Jakarta', 'Bandung', 'Medan', 'Palembang'],
+      question: 'Kota manakah, jika diterjemahkan ke dalam bahasa Inggris, yang berarti \'pertemuan berlumpur\'?',
+      options: ['Singapura', 'Jakarta', 'Kuala Lumpur', 'Hongkong'],
       correctAnswerIndex: 2,
+      category: 'Pengetahuan Umum',
+    ),
+    Question(
+      question: 'Manakah dari berikut ini yang BUKAN hewan nokturnal?',
+      options: ['Luak', 'Serigala', 'Musang', 'Orangutan'],
+      correctAnswerIndex: 3,
+      category: 'Pengetahuan Umum',
+    ),
+    Question(
+      question: 'Berapa lama waktu yang dibutuhkan cahaya matahari untuk mencapai bumi?',
+      options: ['8 detik', '8 menit', '8 jam', '8 hari'],
+      correctAnswerIndex: 1,
       category: 'Pengetahuan Umum',
     ),
   ];
