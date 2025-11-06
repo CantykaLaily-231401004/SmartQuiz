@@ -4,12 +4,15 @@ import '../providers/quiz_provider.dart';
 import '../widgets/theme_toggle.dart';
 import '../widgets/back_button_widget.dart';
 import '../widgets/answer_option.dart';
+import '../config/theme.dart';
 
 class ReviewScreen extends StatelessWidget {
   const ReviewScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Consumer<QuizProvider>(
@@ -21,21 +24,21 @@ class ReviewScreen extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF4A70A9),
-                    boxShadow: [
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? const Color.fromRGBO(39, 39, 58, 0.5) : const Color(0xFF4A70A9),
+                    boxShadow: const [
                       BoxShadow(
-                        color: Color(0x3F000000),
+                        color: Color.fromRGBO(0, 0, 0, 0.2),
                         blurRadius: 4,
                         offset: Offset(0, 2),
                       ),
                     ],
                   ),
-                  child: Row(
+                  child: const Row(
                     children: [
-                      const BackButtonWidget(),
-                      const SizedBox(width: 12),
-                      const Expanded(
+                      BackButtonWidget(),
+                      SizedBox(width: 12),
+                      Expanded(
                         child: Text(
                           'Review Jawaban',
                           style: TextStyle(
@@ -44,9 +47,10 @@ class ReviewScreen extends StatelessWidget {
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w600,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const ThemeToggle(),
+                      ThemeToggle(),
                     ],
                   ),
                 ),
@@ -56,11 +60,11 @@ class ReviewScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         'Jawabanmu',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Color(0xFF0E469A),
+                          color: isDarkMode ? AppTheme.accentBlue : const Color(0xFF0E469A),
                           fontSize: 16,
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w700,
@@ -71,9 +75,11 @@ class ReviewScreen extends StatelessWidget {
                         'Selamat! Kamu telah menyelesaikan kuis.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: const Color(0xFF4A70A9).withOpacity(0.8),
+                          color: isDarkMode
+                              ? Colors.white54
+                              : const Color.fromRGBO(74, 112, 169, 0.8),
                           fontSize: 14,
-                          fontFamily: 'Roboto',
+                          fontFamily: 'Poppins',
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -95,13 +101,11 @@ class ReviewScreen extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.grey[800]
-                                : Colors.white,
+                            color: isDarkMode ? AppTheme.darkCard : Colors.white,
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: const [
                               BoxShadow(
-                                color: Color(0x3F000000),
+                                color: Color.fromRGBO(0, 0, 0, 0.12),
                                 blurRadius: 16,
                                 offset: Offset(0, 0),
                               ),
@@ -116,8 +120,10 @@ class ReviewScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     'Pertanyaan: ${index + 1}/${provider.totalQuestions}',
-                                    style: const TextStyle(
-                                      color: Color(0xFF4A70A9),
+                                    style: TextStyle(
+                                      color: isDarkMode
+                                          ? AppTheme.accentBlue
+                                          : const Color(0xFF4A70A9),
                                       fontSize: 12,
                                       fontFamily: 'Poppins',
                                       fontWeight: FontWeight.w500,
@@ -128,8 +134,8 @@ class ReviewScreen extends StatelessWidget {
                                     textAlign: TextAlign.right,
                                     style: TextStyle(
                                       color: isCorrect
-                                          ? const Color(0xFF06B214)
-                                          : const Color(0xFFA02525),
+                                          ? AppTheme.greenCorrect
+                                          : AppTheme.redWrong,
                                       fontSize: 12,
                                       fontFamily: 'Poppins',
                                       fontWeight: FontWeight.w700,
@@ -142,16 +148,14 @@ class ReviewScreen extends StatelessWidget {
                               Text(
                                 question.question,
                                 style: TextStyle(
-                                  color: Theme.of(context).brightness == Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black,
+                                  color: isDarkMode ? Colors.white : Colors.black,
                                   fontSize: 16,
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              // Options menggunakan widget reusable yang sama
+                              // Options
                               ...List.generate(question.options.length, (optionIndex) {
                                 final isUserAnswer = userAnswerIndex == optionIndex;
                                 final isCorrectAnswer = question.correctAnswerIndex == optionIndex;
