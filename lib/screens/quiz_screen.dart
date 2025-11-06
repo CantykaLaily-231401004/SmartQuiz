@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'result_screen.dart';
 import '../providers/quiz_provider.dart';
 
 class QuizScreen extends StatelessWidget {
@@ -53,7 +54,7 @@ class QuizScreen extends StatelessWidget {
                       ),
                     ),
                     TextButton(
-                      onPressed: () => _showExitDialog(context),
+                      onPressed: () => _showExitDialog(context, provider),
                       child: const Text(
                         'Keluar',
                         style: TextStyle(
@@ -66,6 +67,7 @@ class QuizScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 20),
+
                 // Question
                 Container(
                   width: double.infinity,
@@ -91,6 +93,7 @@ class QuizScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 30),
+
                 // Answer Options
                 ...List.generate(question.options.length, (index) {
                   return Padding(
@@ -104,6 +107,53 @@ class QuizScreen extends StatelessWidget {
                     ),
                   );
                 }),
+
+                const SizedBox(height: 40),
+
+                // Navigation Buttons
+                Row(
+                  children: [
+                    if (provider.currentQuestionIndex > 0)
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: ElevatedButton(
+                            onPressed: () => provider.previousQuestion(),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text('Sebelumnya'),
+                          ),
+                        ),
+                      ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          left: provider.currentQuestionIndex > 0 ? 8 : 0,
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () => _nextQuestion(context, provider),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF4A70A9),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            provider.isLastQuestion ? 'Selesai' : 'Selanjutnya',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           );
@@ -113,12 +163,12 @@ class QuizScreen extends StatelessWidget {
   }
 
   Widget _buildAnswerOption(
-      BuildContext context,
-      String text,
-      int index,
-      bool isSelected,
-      QuizProvider provider,
-      ) {
+    BuildContext context,
+    String text,
+    int index,
+    bool isSelected,
+    QuizProvider provider,
+  ) {
     return GestureDetector(
       onTap: () => provider.answerQuestion(index),
       child: Container(
@@ -144,7 +194,29 @@ class QuizScreen extends StatelessWidget {
     );
   }
 
-  void _showExitDialog(BuildContext context) {
+  void _nextQuestion(BuildContext context, QuizProvider provider) {
+    if (provider.userAnswers[provider.currentQuestionIndex] == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Silakan pilih salah satu jawaban terlebih dahulu.'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    if (provider.isLastQuestion) {
+      // Logic yang benar: Navigasi ke ResultScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ResultScreen()),
+      );
+    } else {
+      provider.nextQuestion();
+    }
+  }
+
+  void _showExitDialog(BuildContext context, QuizProvider provider) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -157,8 +229,9 @@ class QuizScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(ctx);
-              Navigator.pop(context);
+              provider.resetQuiz(); // Reset the quiz progress
+              Navigator.pop(ctx); // Close dialog
+              Navigator.pop(context); // Back to home
             },
             child: const Text('Keluar', style: TextStyle(color: Colors.red)),
           ),
