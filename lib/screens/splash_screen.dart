@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -63,30 +64,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Temporary placeholder
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        backgroundColor: const Color(0xFF4A70A9),
-      ),
-      body: const Center(
-        child: Text(
-          'Home Screen (Coming Soon)',
-          style: TextStyle(
-            fontSize: 18,
-            fontFamily: 'Poppins',
           ),
         ),
       ),
