@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../config/routes.dart';
 import '../providers/quiz_provider.dart';
-import 'home_screen.dart';
+import '../widgets/theme_toggle.dart';
+import '../widgets/custom_button.dart';
 
 class ResultScreen extends StatelessWidget {
   const ResultScreen({super.key});
@@ -9,138 +11,215 @@ class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF4A70A9),
-        title: Consumer<QuizProvider>(
-          builder: (context, provider, _) {
-            return Text(
-              'Hasil Akhir Kuis ${provider.selectedCategory}',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            );
-          },
-        ),
-        automaticallyImplyLeading: false,
-      ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Consumer<QuizProvider>(
         builder: (context, provider, _) {
           final result = provider.getQuizResult();
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
+          return SafeArea(
             child: Column(
               children: [
-                // Score Card
+                // Header
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(32),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF4A70A9), Color(0xFF8FABD4)],
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: const [
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF4A70A9),
+                    boxShadow: [
                       BoxShadow(
                         color: Color(0x3F000000),
-                        blurRadius: 16,
-                        offset: Offset(0, 4),
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
                       ),
                     ],
                   ),
-                  child: Column(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Skor Kamu',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
                       Text(
-                        '${result.score}/${result.totalQuestions}',
-                        style: const TextStyle(
-                          color: Color(0xFFFFCE31),
-                          fontSize: 48,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        '${result.percentage.toStringAsFixed(0)}%',
+                        'Hasil Akhir Kuis ${result.category}',
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
+                      const ThemeToggle(),
                     ],
                   ),
                 ),
-                const SizedBox(height: 30),
-                // Statistics
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildStatCard(
-                      'Total Soal',
-                      '${result.totalQuestions}',
-                      const Color(0xFF4A70A9),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        // Score card with circular design
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              height: 334,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF4A70A9),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            // Decorative circles
+                            ..._buildDecorativeCircles(context),
+
+                            // Main content
+                            Positioned(
+                              top: 40,
+                              child: Column(
+                                children: [
+                                  const Text(
+                                    'Skor Kamu',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 32,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  // Circular score display
+                                  Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      // Outer most circle
+                                      Container(
+                                        width: 175,
+                                        height: 175,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.25),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      // Middle circle
+                                      Container(
+                                        width: 139,
+                                        height: 139,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.30),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      // Inner circle
+                                      Container(
+                                        width: 116,
+                                        height: 116,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            '${result.score}/${result.totalQuestions}',
+                                            style: const TextStyle(
+                                              color: Color(0xFF4A70A9),
+                                              fontSize: 32,
+                                              fontFamily: 'DM Sans',
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        // Statistics card (tanpa Total Soal, persentase fixed)
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey[800]
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x1F000000),
+                                blurRadius: 8,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              _buildStatRow(
+                                '${result.percentage.toStringAsFixed(0)}%',
+                                'Persentase Benar',
+                                const Color(0xFF0E469A),
+                              ),
+                              const SizedBox(height: 12),
+                              _buildStatRow(
+                                '${result.correctAnswers}',
+                                'Benar',
+                                const Color(0xFF06B214),
+                              ),
+                              const SizedBox(height: 12),
+                              _buildStatRow(
+                                '${result.wrongAnswers}',
+                                'Salah',
+                                const Color(0xFF9A0E0E),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        // Action buttons
+                        CustomButton(
+                          text: 'Review Jawaban',
+                          onPressed: () {
+                            Navigator.pushNamed(context, AppRoutes.review);
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        CustomButton(
+                          text: 'Kuis Lagi',
+                          onPressed: () {
+                            provider.resetQuiz();
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              AppRoutes.home,
+                                  (route) => false,
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        CustomButton(
+                          text: 'Papan Peringkat',
+                          onPressed: () {
+                            Navigator.pushNamed(context, AppRoutes.leaderboard);
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        CustomButton(
+                          text: 'Kembali ke Home',
+                          onPressed: () {
+                            provider.resetAll();
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              AppRoutes.home,
+                                  (route) => false,
+                            );
+                          },
+                          backgroundColor: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey[700]
+                              : Colors.white,
+                          textColor: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ],
                     ),
-                    _buildStatCard(
-                      'Benar',
-                      '${result.correctAnswers}',
-                      const Color(0xFF06B214),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildStatCard(
-                      'Salah',
-                      '${result.wrongAnswers}',
-                      const Color(0xFF9A0E0E),
-                    ),
-                    _buildStatCard(
-                      'Selesai',
-                      '${result.totalQuestions}',
-                      const Color(0xFF0E469A),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 40),
-                // Action Buttons
-                _buildButton(
-                  'Kuis Lagi',
-                      () {
-                    provider.resetAll();
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => const HomeScreen()),
-                          (route) => false,
-                    );
-                  },
-                ),
-                const SizedBox(height: 15),
-                _buildButton(
-                  'Kembali ke Home',
-                      () {
-                    provider.resetAll();
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => const HomeScreen()),
-                          (route) => false,
-                    );
-                  },
-                  backgroundColor: Colors.white,
-                  textColor: Colors.black,
+                  ),
                 ),
               ],
             ),
@@ -150,74 +229,99 @@ class ResultScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String label, String value, Color color) {
-    return Container(
-      width: 150,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x1F000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
+  List<Widget> _buildDecorativeCircles(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return [
+      Positioned(
+        right: screenWidth * 0.05,
+        top: 220,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.10),
+            shape: BoxShape.circle,
           ),
-        ],
+        ),
       ),
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: TextStyle(
-              color: color,
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-            ),
+      Positioned(
+        left: screenWidth * 0.15,
+        top: 190,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.10),
+            shape: BoxShape.circle,
           ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Color(0xFF2B252C),
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ],
+        ),
       ),
-    );
+      Positioned(
+        left: screenWidth * 0.1,
+        top: 337,
+        child: Container(
+          width: 90,
+          height: 90,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.10),
+            shape: BoxShape.circle,
+          ),
+        ),
+      ),
+      Positioned(
+        right: screenWidth * 0.0,
+        top: 356,
+        child: Container(
+          width: 90,
+          height: 90,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.10),
+            shape: BoxShape.circle,
+          ),
+        ),
+      ),
+    ];
   }
 
-  Widget _buildButton(
-      String text,
-      VoidCallback onPressed, {
-        Color? backgroundColor,
-        Color? textColor,
-      }) {
-    return SizedBox(
-      width: double.infinity,
-      height: 55,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? const Color(0xFF4A70A9),
-          foregroundColor: textColor ?? Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          elevation: 4,
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: textColor ?? Colors.white,
+  Widget _buildStatRow(String value, String label, Color color) {
+    return Row(
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
           ),
         ),
-      ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 16,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Color(0xFF2B252C),
+                  fontSize: 14,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
